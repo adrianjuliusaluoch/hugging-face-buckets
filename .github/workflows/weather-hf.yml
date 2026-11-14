@@ -1,0 +1,25 @@
+name: Hourly Weather Run (Hugging Face test)
+
+on:
+  workflow_dispatch: # triggered by cron-job.org (or by hand from the Actions tab)
+
+concurrency:
+  group: weather-hf # never run two at once
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run python -m weather_hf.run
+        env:
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+          HF_NAMESPACE: ${{ secrets.HF_NAMESPACE }}
+          HF_BUCKET: ${{ secrets.HF_BUCKET }}
+          HF_S3_KEY_ID: ${{ secrets.HF_S3_KEY_ID }}
+          HF_S3_SECRET: ${{ secrets.HF_S3_SECRET }}
+          PG_CATALOG: ${{ secrets.PG_CATALOG }}
