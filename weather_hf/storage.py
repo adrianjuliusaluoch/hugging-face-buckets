@@ -15,7 +15,7 @@ def client():
         config=Config(
             region_name="us-east-1",
             s3={"addressing_style": "path"},
-            # the gateway can't parse the checksums newer boto3 sends by default
+            retries={"max_attempts": 10, "mode": "adaptive"},
             request_checksum_calculation="when_required",
             response_checksum_validation="when_required",
         ),
