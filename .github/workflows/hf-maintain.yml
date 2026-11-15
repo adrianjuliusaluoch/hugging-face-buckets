@@ -1,0 +1,25 @@
+name: Weather HF maintenance (test)
+
+on:
+  workflow_dispatch: # triggered by cron-job.org
+
+concurrency:
+  group: weather-hf   # same group as the hourly run, so the two never overlap
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run python -m weather_hf.maintain --run --days 7
+        env:
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+          HF_NAMESPACE: ${{ secrets.HF_NAMESPACE }}
+          HF_BUCKET: ${{ secrets.HF_BUCKET }}
+          HF_S3_KEY_ID: ${{ secrets.HF_S3_KEY_ID }}
+          HF_S3_SECRET: ${{ secrets.HF_S3_SECRET }}
+          PG_CATALOG: ${{ secrets.PG_CATALOG }}

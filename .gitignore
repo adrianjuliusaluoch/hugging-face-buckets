@@ -2,3 +2,6 @@
 .venv/
 __pycache__/
 hf_test.ducklake*
+*.ipynb
+.ipynb_checkpoints/
+test/
